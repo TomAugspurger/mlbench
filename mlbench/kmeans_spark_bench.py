@@ -1,13 +1,7 @@
-from pyspark.sql import SparkSession
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.feature import VectorAssembler
 
-from mlbench.utils import timings, timed
-
-
-def init():
-    spark = SparkSession.builder.appName("ml-bench").getOrCreate()
-    return spark
+from mlbench.utils import timings, timed, init_spark
 
 
 def read(spark):
@@ -24,7 +18,7 @@ def fit(kmeans, X):
 
 
 def main():
-    spark = init()
+    spark = init_spark()
     kmeans = KMeans(k=3, seed=0)
 
     X = read(spark)
