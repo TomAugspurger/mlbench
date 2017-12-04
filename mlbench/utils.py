@@ -31,7 +31,11 @@ def parquet_as_known(df, src=None):
     return X
 
 
-def init_spark():
+def init_dask(cfg):
+    pass
+
+
+def init_spark(cfg):
     """Initialize a Spark Session"""
     spark = SparkSession.builder.appName("ml-bench").getOrCreate()
     return spark

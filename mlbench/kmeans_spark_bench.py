@@ -1,10 +1,11 @@
+from pathlib import Path
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.feature import VectorAssembler
 
-from mlbench.utils import timings, timed, init_spark
+from mlbench.utils import timings, timed, init_spark, load_config
 
 
-def read(spark):
+def read(cfg, spark):
     df = spark.read.load("/tmp/foo.parq/")
     assembler = VectorAssembler(outputCol="features")
     X = assembler.setInputCols(df.columns).transform(df).select("features")
@@ -13,16 +14,19 @@ def read(spark):
 
 
 @timed
-def fit(kmeans, X):
+def fit(cfg, kmeans, X):
     return kmeans.fit(X)
 
 
 def main():
-    spark = init_spark()
+    cfg = Path(__file__).parent.joinpath("kmeans_config.yaml")
+    cfg = load_config(str(cfg))
+
+    spark = init_spark(cfg)
     kmeans = KMeans(k=3, seed=0)
 
-    X = read(spark)
-    fit(kmeans, X)
+    X = read(cfg, spark)
+    fit(cfg, kmeans, X)
     print(timings)
 
 
